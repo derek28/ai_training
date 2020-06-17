@@ -41,8 +41,8 @@ void generate(int nHand, string filename) {
 		board.push_back(deck.Deal());
 		board.push_back(deck.Deal());
 		board.push_back(deck.Deal());
-		strength = GetImmediateStrength(hole_cards, board, NULL);
-	//	strength = GetEffectiveStrength(hole_cards, board, NULL);
+	//	strength = GetImmediateStrength(hole_cards, board, NULL);
+		strength = GetEffectiveStrength(hole_cards, board, NULL);
 //		cout << hole_cards[0] << hole_cards[1] << " ";
 //		cout << board[0] << board[1] << board[2] << endl;
 //		cout << "IHS = " << strength << endl;
