@@ -20,6 +20,21 @@ def import_data(filename):
     print("Number of samples read: ", nSamps)
     return data, nSamps
 
+def export_weights(filename, weights):
+    fout = open(filename, "w")
+
+    # print weights
+    for x in weights[0]:
+        for y in x:
+            fout.write(str(y))
+            fout.write(" ")
+        fout.write("\n")
+    # print bias term
+    for x in weights[1]:
+        fout.write(str(x))
+        fout.write(" ")
+    fout.close()
+
 # set up training
 model = tf.keras.Sequential([
 # Adds a densely-connected layer with 104 units to the model:
@@ -65,14 +80,26 @@ print("Number of test samples:", len(strength_test))
 
 # training model
 model.fit(hands_train, strength_train, 
-            epochs = 5,
+            epochs = 1,
             validation_data = (hands_valid, strength_valid))
 
 # evaluate model
 results = model.evaluate(hands_test, strength_test)
 print('test loss = ', results)
 
-predictions = model.predict(hands_test[:10, :])
+predictions = model.predict(hands_test[:20, :])
 print("Predictions vs Real Strength")
-for i in range(10):
+for i in range(20):
     print(predictions[i], strength_test[i])
+
+weights =  model.layers[0].get_weights()
+print("Length of weights from layer 0:", len(weights))
+export_weights("weight0.txt", weights)
+
+weights =  model.layers[1].get_weights()
+print("Length of weights from layer 1:", len(weights))
+export_weights("weight1.txt", weights)
+
+weights =  model.layers[2].get_weights()
+print("Length of weights from layer 2:", len(weights))
+export_weights("weight2.txt", weights)
