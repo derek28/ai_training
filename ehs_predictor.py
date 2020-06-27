@@ -29,6 +29,7 @@ def export_weights(filename, weights):
             fout.write(str(y))
             fout.write(" ")
         fout.write("\n")
+        
     # print bias term
     for x in weights[1]:
         fout.write(str(x))
@@ -36,20 +37,20 @@ def export_weights(filename, weights):
     fout.close()
 
 # set up training
-model = tf.keras.Sequential([
-# Adds a densely-connected layer with 104 units to the model:
-    layers.Dense(104, activation = 'relu', 
-                    input_shape = (104,), 
+inputs = keras.Input(shape = (104,))
+l1 = layers.Dense(104, activation = 'relu', 
                     kernel_initializer = 'random_normal',
                     bias_initializer = 'zeros'
-                ),
-# Add another:
-    layers.Dense(104, activation = 'relu',
+                )
+a1 = l1(inputs)
+l2 = layers.Dense(104, activation = 'relu',
                     kernel_initializer = 'random_normal',
                     bias_initializer = 'zeros'
-                ),
-# Add an output layer with 1 output, the prediction of hand strength:
-    layers.Dense(1)])
+                )
+a2 = l2(a1)
+outputs = layers.Dense(1)(a2)
+
+model = keras.Model(inputs=inputs, outputs=outputs)
 
 print(model.summary())
 
@@ -60,8 +61,8 @@ model.compile(optimizer = tf.keras.optimizers.Adam(0.01), loss = 'mse')
 samples, num = import_data("training.dat")
 hands = samples[:, :-1]
 strength = samples[:, -1]
-print(hands[:5, :])
-print(strength[:5])
+#print(hands[:5, :])
+#print(strength[:5])
 
 # devide data into training, validation and test
 posTrain = int(0.8 * num);           # 80% as training data
@@ -80,26 +81,36 @@ print("Number of test samples:", len(strength_test))
 
 # training model
 model.fit(hands_train, strength_train, 
-            epochs = 1,
+            epochs = 30,
             validation_data = (hands_valid, strength_valid))
 
 # evaluate model
 results = model.evaluate(hands_test, strength_test)
 print('test loss = ', results)
 
-predictions = model.predict(hands_test[:20, :])
+predictions = model.predict(hands_test[-20:, :])
+#for j in range(8):
+#    for i in range(13):
+#        print(hands_test[-1][i + 13 * j], end = " ")
+#    print("\n")
+
+a = l1(hands_test[-1:, :])
+print(a)
+b = l2(a)
+print(b)
+
 print("Predictions vs Real Strength")
 for i in range(20):
-    print(predictions[i], strength_test[i])
+    print(predictions[i], strength_test[-20+i])
 
-weights =  model.layers[0].get_weights()
-print("Length of weights from layer 0:", len(weights))
-export_weights("weight0.txt", weights)
-
-weights =  model.layers[1].get_weights()
+weights = model.layers[1].get_weights()
 print("Length of weights from layer 1:", len(weights))
 export_weights("weight1.txt", weights)
 
-weights =  model.layers[2].get_weights()
+weights = model.layers[2].get_weights()
 print("Length of weights from layer 2:", len(weights))
 export_weights("weight2.txt", weights)
+
+weights = model.layers[3].get_weights()
+print("Length of weights from layer 3:", len(weights))
+export_weights("weight3.txt", weights)
