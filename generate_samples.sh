@@ -1,6 +1,6 @@
 #!/usr/bin/bash
 
-nproc=4					# number of processes
+nproc=2					# number of processes
 nsamp=8000				# number of samples per process
 filename=ehs_training.dat	# output filename
 
