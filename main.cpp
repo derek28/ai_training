@@ -5,10 +5,12 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <ctime>
 #include "card.h"
 #include "deck.h"
 #include "pokerhand.h"
 #include "strength.h"
+
 
 
 using namespace std;
@@ -66,6 +68,8 @@ int main(int argc, char **argv) {
 	clock_t start;
 	double duration;
 	int nSamp;
+
+	srand(time(NULL));
 	
 	if (argc != 3) {
 		cout << "Usage: ./poker <numSamples> <filename>" << endl;
